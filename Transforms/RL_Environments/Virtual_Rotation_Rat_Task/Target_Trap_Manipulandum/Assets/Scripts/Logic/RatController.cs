@@ -13,6 +13,7 @@ public class RatController : MonoBehaviour
     [Tooltip("The amount of rotation per Rotate action. This will snap to a number that is a divisor for 350 (so the rat always returns to 0 angle). Between 1 and 90.")]
     public int rotateSnap;
 
+
     [ExecuteInEditMode]
     void OnValidate()
     {
@@ -163,7 +164,11 @@ public class RatController : MonoBehaviour
                 break;
         }
 
-
+        // At the end of an action the new observation must be prepared ready to be send if asked
+        //Debug.Log("1. Sending Observation Required Message");
+        EventManager.Instance.onNeedingNewObservation.Invoke();
     }
+
+    
 
 }

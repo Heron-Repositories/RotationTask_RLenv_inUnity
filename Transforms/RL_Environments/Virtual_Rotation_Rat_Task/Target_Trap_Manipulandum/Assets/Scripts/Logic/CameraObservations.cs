@@ -11,48 +11,51 @@ using UnityEngine.Rendering;
 public class CameraObservations : MonoBehaviour
 {
     private GraphicsFormat format;
-    private bool screenResNotUpdated = true;
+    public Camera observationCamera;
 
 
     // Event onNewScreenResolution that triggers this is thrown by the RatController
     void RecalculateScreenRes(int width, int height)
     {
-        if (screenResNotUpdated)
-        {
+        //if (screenResNotUpdated)
+        //{
             Screen.SetResolution(width, height, FullScreenMode.Windowed);
-            screenResNotUpdated = false; // The screen res is allowed to be set only once
-        }
+       //     screenResNotUpdated = false; // The screen res is allowed to be set only once
+        //}
         
     }
     
-    IEnumerator Start()
+    private void Start()
     {
         EventManager.Instance.onNewScreenResolution.AddListener(RecalculateScreenRes);
 
-        yield return new WaitForSeconds(1);
-        while (screenResNotUpdated) // While the screen res is not set then the game does not return aby pixel observations
-        {
-            yield return new WaitForSeconds(0.001f);
-        }
+        EventManager.Instance.onNeedingNewObservation.AddListener(PrepareNewObservation);
 
-        while (true) // Now that the screen res is set the game will capture every frame and return it as an observation if asked
-        {
-            yield return new WaitForSeconds(0.001f);
-            //yield return new WaitForEndOfFrame();
+        PrepareNewObservation();
+    }
 
-            var rt = default(RenderTexture);
+    private void PrepareNewObservation()
+    {
+        //Debug.Log("2. Received Observation Required Message");
+        observationCamera.Render();
+        CaptureScreenShot();
+    }
 
-            while(rt == default(RenderTexture))
-                rt = RenderTexture.GetTemporary(Screen.width, Screen.height, 32);
+    public void CaptureScreenShot()
+    {
+        //Debug.Log("3. Starting Capturing Screen shot");
+        var rt = default(RenderTexture);
 
-            format = rt.graphicsFormat;
-            
-            ScreenCapture.CaptureScreenshotIntoRenderTexture(rt);
+        while (rt == default(RenderTexture))
+            rt = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
 
-            AsyncGPUReadback.Request(rt, 0, TextureFormat.RGBA32, OnCompleteReadback);
+        format = rt.graphicsFormat;
 
-            RenderTexture.ReleaseTemporary(rt);
-        }
+        ScreenCapture.CaptureScreenshotIntoRenderTexture(rt);
+        //Debug.Log("4. Requesting GPU Readback");
+        AsyncGPUReadback.Request(rt, 0, TextureFormat.RGBA32, OnCompleteReadback);
+
+        RenderTexture.ReleaseTemporary(rt);
     }
 
 
@@ -66,10 +69,11 @@ public class CameraObservations : MonoBehaviour
 
         try
         {
-            
+            //Debug.Log("5. Turning GPU readback into bytes array");
             byte[]  array = request.GetData<byte>().ToArray();
 
             byte[] pngBytes = ImageConversion.EncodeArrayToPNG(array, format, (uint)Screen.width, (uint)Screen.height);
+            //Debug.Log("6. Sending Observation Ready Message");
             EventManager.Instance.onObservationReady.Invoke(pngBytes);
              
         }
@@ -79,4 +83,5 @@ public class CameraObservations : MonoBehaviour
         }
 
     }
+
 }

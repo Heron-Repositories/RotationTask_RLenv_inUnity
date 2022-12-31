@@ -1380,6 +1380,7 @@ GameObject:
   - component: {fileID: 438505641}
   - component: {fileID: 438505640}
   - component: {fileID: 438505639}
+  - component: {fileID: 438505642}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -1466,6 +1467,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 438505637}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &438505642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 438505637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27a4550c4a3f5e84e95f9d0db4062463, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  observationCamera: {fileID: 963194227}
 --- !u!43 &609986832
 Mesh:
   m_ObjectHideFlags: 0
@@ -1833,14 +1847,13 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194229}
-  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!20 &963194227
 Camera:
   m_ObjectHideFlags: 0
@@ -1912,18 +1925,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shader: {fileID: 4800000, guid: 7ebf1c9b614222540992bce46b534047, type: 3}
---- !u!114 &963194230
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27a4550c4a3f5e84e95f9d0db4062463, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1041487716
 GameObject:
   m_ObjectHideFlags: 0
@@ -3028,6 +3029,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onClientStopped:
+    m_PersistentCalls:
+      m_Calls: []
+  onNeedingNewObservation:
     m_PersistentCalls:
       m_Calls: []
   onUpdatedAction:

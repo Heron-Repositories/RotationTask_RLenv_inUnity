@@ -10,6 +10,7 @@ public class EventManager : MonoBehaviour
     public UnityEvent onClientStarted;
     public UnityEvent onStopClient;
     public UnityEvent onClientStopped;
+    public UnityEvent onNeedingNewObservation;
 
     [System.Serializable]
     public class StringEvent : UnityEvent<string> { }
@@ -37,6 +38,7 @@ public class EventManager : MonoBehaviour
             onClientStarted = new();
             onStopClient = new();
             onClientStopped = new();
+            onNeedingNewObservation = new();
 
             onUpdatedAction = new();
             onParametersChange = new();

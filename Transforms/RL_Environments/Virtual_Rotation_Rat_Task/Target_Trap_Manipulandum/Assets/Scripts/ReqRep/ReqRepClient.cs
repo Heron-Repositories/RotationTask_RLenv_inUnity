@@ -2,6 +2,7 @@
 using NetMQ;
 using NetMQ.Sockets;
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace ReqRep
@@ -24,6 +25,7 @@ namespace ReqRep
         private ClientStatus _clientStatus = ClientStatus.Inactive;
 
         private byte[] observationArray;
+        private bool newObservationArray = false;
 
         private void Start()
         {
@@ -55,13 +57,24 @@ namespace ReqRep
 
         private void HandleResponseMessage(string message, ResponseSocket repSocket)
         {
+            //Debug.Log("A. Receiving Request for new Observation");
             TimeSpan timeout = new(0, 0, 1);
+            while (!newObservationArray)
+            {
+                //Debug.Log("B. Waiting for new Observation Array to be ready");
+            }
+            //Debug.Log("C. Sending Out the new Observation Array");
             repSocket.TrySendFrame(timeout, observationArray);
+            //Debug.Log("D. New Observation Array Send");
+            //Debug.Log("--------------------------------");
+            newObservationArray = false;
         }
 
         private void SaveNewObservation(byte[] array)
         {
+            //Debug.Log("7. Receining Observation Ready Message and Saving Observation Array");
             observationArray = array;
+            newObservationArray = true;
         }
 
         private void OnStartClient()
