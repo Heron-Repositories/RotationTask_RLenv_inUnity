@@ -13,6 +13,7 @@ public class RatController : MonoBehaviour
     [Tooltip("The amount of rotation per Rotate action. This will snap to a number that is a divisor for 350 (so the rat always returns to 0 angle). Between 1 and 90.")]
     public int rotateSnap;
 
+    private int numberOfRotations = 0;
 
     [ExecuteInEditMode]
     void OnValidate()
@@ -43,7 +44,8 @@ public class RatController : MonoBehaviour
     // private CircularBuffer<KeyValuePair<string, string>> actions_memory;
 
     private OrderedDictionary comProtocol;
-
+    private bool LeftPawExtended = false;
+    private bool RightPawExtended = false;
 
     // Start is called before the first frame update
     void Start()
@@ -104,6 +106,10 @@ public class RatController : MonoBehaviour
         OrderedDictionary actions_values = (OrderedDictionary)comProtocol["Action"];
         List<string> all_actions = (List<string>)actions_values.Keys.Cast<string>().ToList();
 
+        CollisionCheck headCollisionCheck = transform.Find("Head").GetComponent<CollisionCheck>();
+        CollisionCheck bodyCollisionCheck = transform.Find("Body").GetComponent<CollisionCheck>();
+
+
         switch (latest_action.Key)  
         {
             case var move when move == all_actions[0]: // "Move"
@@ -113,10 +119,17 @@ public class RatController : MonoBehaviour
                 switch (latest_action.Value)
                 {
                     case var value when value == all_values_in_action[0]: // "Forwards"
-                        transform.Translate(new Vector3(0, 0, moveSnap));
+                        if (!RightPawExtended && !LeftPawExtended && !headCollisionCheck.ShouldIMove(transform.forward, moveSnap))
+                        {
+                            transform.Translate(new Vector3(0, 0, moveSnap));
+                        }
                         break;
                     case var value when value == all_values_in_action[1]: // "Back"
-                        transform.Translate(new Vector3(0, 0, - moveSnap));
+                        if (!RightPawExtended && !LeftPawExtended && !bodyCollisionCheck.ShouldIMove(-transform.forward, moveSnap))
+                        {
+                            transform.Translate(new Vector3(0, 0, -moveSnap));
+                        }
+                            
                         break;
                 }
                 break;
@@ -127,10 +140,20 @@ public class RatController : MonoBehaviour
                 switch (latest_action.Value)
                 {
                     case var value when value == all_values_in_action[0]: // "CW"
-                        transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y + rotateSnap, transform.position.z));
+                        if (!RightPawExtended && !LeftPawExtended)
+                        {
+                            numberOfRotations += 1;
+                            transform.rotation = Quaternion.Euler(0.0f, numberOfRotations * rotateSnap, 0.0f);
+                        }
+                            
                         break;
                     case var value when value == all_values_in_action[1]: // "CCW"
-                        transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y - rotateSnap, transform.position.z));
+                        if (!RightPawExtended && !LeftPawExtended)
+                        {
+                            numberOfRotations -= 1;
+                            transform.rotation = Quaternion.Euler(0.0f, numberOfRotations * rotateSnap, 0.0f);
+                        }
+                            
                         break;
                 }
                 break;
@@ -141,34 +164,48 @@ public class RatController : MonoBehaviour
                 switch (latest_action.Value)
                 {
                     case var value when value == all_values_in_action[0]: // "Extend"
-                        throw new NotImplementedException();
+                        if (!LeftPawExtended)
+                        {
+                            transform.Find("LeftPaw").Translate(new Vector3(0, 0, 1.3f));
+                            LeftPawExtended = true;
+                        }
                         break;
                     case var value when value == all_values_in_action[1]: // "Retrieve"
-                        throw new NotImplementedException();
+                        if (LeftPawExtended)
+                        {
+                            transform.Find("LeftPaw").Translate(new Vector3(0, 0, -1.3f));
+                            LeftPawExtended = false;
+                        }
                         break;
                 }
                 break;
-            case var rightPaw when rightPaw == all_actions[2]: // "RightPaw"
+            case var rightPaw when rightPaw == all_actions[3]: // "RightPaw"
 
                 all_values_in_action = (List<string>)actions_values[rightPaw];
 
                 switch (latest_action.Value)
                 {
                     case var value when value == all_values_in_action[0]: // "Extend"
-                        throw new NotImplementedException();
+                        if (!RightPawExtended)
+                        {
+                            RightPawExtended = true;
+                            transform.Find("RightPaw").Translate(new Vector3(0, 0, 1.3f));
+                        }
                         break;
                     case var value when value == all_values_in_action[1]: // "Retrieve"
-                        throw new NotImplementedException();
+                        if (RightPawExtended)
+                        {
+                            RightPawExtended = false;
+                            transform.Find("RightPaw").Translate(new Vector3(0, 0, -1.3f));
+                        }
                         break;
                 }
                 break;
         }
 
         // At the end of an action the new observation must be prepared ready to be send if asked
-        //Debug.Log("1. Sending Observation Required Message");
         EventManager.Instance.onNeedingNewObservation.Invoke();
     }
 
-    
 
 }

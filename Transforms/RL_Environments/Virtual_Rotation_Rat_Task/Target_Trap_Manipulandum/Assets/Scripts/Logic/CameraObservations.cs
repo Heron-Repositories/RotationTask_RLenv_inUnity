@@ -17,12 +17,7 @@ public class CameraObservations : MonoBehaviour
     // Event onNewScreenResolution that triggers this is thrown by the RatController
     void RecalculateScreenRes(int width, int height)
     {
-        //if (screenResNotUpdated)
-        //{
-            Screen.SetResolution(width, height, FullScreenMode.Windowed);
-       //     screenResNotUpdated = false; // The screen res is allowed to be set only once
-        //}
-        
+        Screen.SetResolution(width, height, FullScreenMode.Windowed);
     }
     
     private void Start()
@@ -36,14 +31,12 @@ public class CameraObservations : MonoBehaviour
 
     private void PrepareNewObservation()
     {
-        //Debug.Log("2. Received Observation Required Message");
         observationCamera.Render();
         CaptureScreenShot();
     }
 
     public void CaptureScreenShot()
     {
-        //Debug.Log("3. Starting Capturing Screen shot");
         var rt = default(RenderTexture);
 
         while (rt == default(RenderTexture))
@@ -52,7 +45,7 @@ public class CameraObservations : MonoBehaviour
         format = rt.graphicsFormat;
 
         ScreenCapture.CaptureScreenshotIntoRenderTexture(rt);
-        //Debug.Log("4. Requesting GPU Readback");
+
         AsyncGPUReadback.Request(rt, 0, TextureFormat.RGBA32, OnCompleteReadback);
 
         RenderTexture.ReleaseTemporary(rt);
@@ -69,11 +62,10 @@ public class CameraObservations : MonoBehaviour
 
         try
         {
-            //Debug.Log("5. Turning GPU readback into bytes array");
             byte[]  array = request.GetData<byte>().ToArray();
 
             byte[] pngBytes = ImageConversion.EncodeArrayToPNG(array, format, (uint)Screen.width, (uint)Screen.height);
-            //Debug.Log("6. Sending Observation Ready Message");
+
             EventManager.Instance.onObservationReady.Invoke(pngBytes);
              
         }

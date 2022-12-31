@@ -73,7 +73,8 @@ def work_function(data, parameters, savenodestate_update_substate_df):
 
     cu.do_action(action_type, action_value)
 
-    #savenodestate_update_substate_df(image__shape=message.shape)
+    # savenodestate_update_substate_df(image__shape=message.shape)
+
     gu.accurate_delay(30)
     result = cu.get_observation('Pixels')
 
