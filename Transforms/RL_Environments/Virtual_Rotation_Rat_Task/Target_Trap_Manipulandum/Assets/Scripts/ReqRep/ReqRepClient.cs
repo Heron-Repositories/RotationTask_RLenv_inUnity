@@ -3,6 +3,7 @@ using NetMQ;
 using NetMQ.Sockets;
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -26,6 +27,7 @@ public class ReqRepClient : MonoBehaviour
     private byte[] observationArray;
     private bool newObservationArrayReady = false;
     private int reward = 0;
+    private bool touchRewardPriority = false;
 
     private void Start()
     {
@@ -39,8 +41,6 @@ public class ReqRepClient : MonoBehaviour
 
         EventManager.Instance.onObservationReady.AddListener(SaveNewObservation);
         EventManager.Instance.onRewardStructureChange.AddListener(SaveNewReward);
-        EventManager.Instance.onRewardPortTouched.AddListener(SaveNewRewardDueToPortTouched);
-
 
         OnStartClient();
     }
@@ -75,7 +75,6 @@ public class ReqRepClient : MonoBehaviour
         {
             //Debug.Log("B. Waiting for new Observation Array to be ready");
         }
-
         TimeSpan timeout = new(0, 0, 1);
         repSocket.TrySendFrame(timeout, observationArray, true);
         string stringReward = reward.ToString();
@@ -92,12 +91,15 @@ public class ReqRepClient : MonoBehaviour
 
     private void SaveNewReward(RewardStructure _rew_struct)
     {
-        reward = (int)_rew_struct;
+        if(!touchRewardPriority)
+            reward = (int)_rew_struct;
+        touchRewardPriority = false;
     }
 
     private void SaveNewRewardDueToPortTouched()
     {
         reward = (int)RewardStructure.PokedAfterTarget;
+        touchRewardPriority = true;
     }
 
 }

@@ -17,8 +17,6 @@ public class ReqRepListener
     private Thread _clientThread;
     private bool _clientCancelled;
 
-
-
     //private readonly ConcurrentQueue<string> _messageQueue = new ConcurrentQueue<string>();
 
     public ReqRepListener(string host, string init_port, string observation_data_port, Action<string> initMessageCallback, Action<string, ResponseSocket> repMessageCallback)
