@@ -18,7 +18,8 @@ public class CommunicationProtocol : MonoBehaviour
             {"Move", new List<string>(){"Forwards", "Back"} } ,
             {"Rotate",  new List<string>(){"CW", "CCW" } },
             {"LeftPaw",  new List<string>(){"Extend", "Retrieve" } },
-            {"RightPaw",  new List<string>(){"Extend", "Retrieve" } }
+            {"RightPaw",  new List<string>(){"Extend", "Retrieve" } },
+            {"Nothing",  new List<string>(){"Nothing"} }
         });
     }
 }

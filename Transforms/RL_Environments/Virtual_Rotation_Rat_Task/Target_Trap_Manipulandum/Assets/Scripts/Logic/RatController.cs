@@ -1,10 +1,10 @@
 
-using System;
+
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
 using System.Linq;
-using System.Reflection;
+
 
 public class RatController : MonoBehaviour
 {
@@ -122,14 +122,19 @@ public class RatController : MonoBehaviour
                         if (!RightPawExtended && !LeftPawExtended && !headCollisionCheck.ShouldIMove(transform.forward, moveSnap))
                         {
                             transform.Translate(new Vector3(0, 0, moveSnap));
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Moved);
                         }
+                        else
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.NotMoved);
                         break;
                     case var value when value == all_values_in_action[1]: // "Back"
                         if (!RightPawExtended && !LeftPawExtended && !bodyCollisionCheck.ShouldIMove(-transform.forward, moveSnap))
                         {
                             transform.Translate(new Vector3(0, 0, -moveSnap));
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Moved);
                         }
-                            
+                        else
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.NotMoved);
                         break;
                 }
                 break;
@@ -144,16 +149,20 @@ public class RatController : MonoBehaviour
                         {
                             numberOfRotations += 1;
                             transform.rotation = Quaternion.Euler(0.0f, numberOfRotations * rotateSnap, 0.0f);
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Moved);
                         }
-                            
+                        else
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.NotMoved);
                         break;
                     case var value when value == all_values_in_action[1]: // "CCW"
                         if (!RightPawExtended && !LeftPawExtended)
                         {
                             numberOfRotations -= 1;
                             transform.rotation = Quaternion.Euler(0.0f, numberOfRotations * rotateSnap, 0.0f);
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Moved);
                         }
-                            
+                        else
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.NotMoved);
                         break;
                 }
                 break;
@@ -178,6 +187,7 @@ public class RatController : MonoBehaviour
                         }
                         break;
                 }
+                EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.NotMoved);
                 break;
             case var rightPaw when rightPaw == all_actions[3]: // "RightPaw"
 
@@ -200,6 +210,10 @@ public class RatController : MonoBehaviour
                         }
                         break;
                 }
+                EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.NotMoved);
+                break;
+            case var nothing when nothing == all_actions[4]: // "Nothing"
+                EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.NotMoved);
                 break;
         }
 

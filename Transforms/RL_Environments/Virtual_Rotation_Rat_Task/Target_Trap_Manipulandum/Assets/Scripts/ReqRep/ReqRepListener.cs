@@ -19,7 +19,7 @@ public class ReqRepListener
 
 
 
-    private readonly ConcurrentQueue<string> _messageQueue = new ConcurrentQueue<string>();
+    //private readonly ConcurrentQueue<string> _messageQueue = new ConcurrentQueue<string>();
 
     public ReqRepListener(string host, string init_port, string observation_data_port, Action<string> initMessageCallback, Action<string, ResponseSocket> repMessageCallback)
     {
@@ -60,7 +60,7 @@ public class ReqRepListener
             {
                 if (!repSocket.TryReceiveFrameString(Encoding.ASCII, out var message)) continue;
                 {
-                    _messageQueue.Enqueue(message);
+                    //_messageQueue.Enqueue(message);
                     _repMessageCallback(message, repSocket);
                 }
             }
