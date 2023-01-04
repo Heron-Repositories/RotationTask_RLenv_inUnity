@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,20 +20,21 @@ public class EventManager : MonoBehaviour
 
     [System.Serializable]
     public class StringEvent : UnityEvent<string> { }
-    public class RewardStructureEvent : UnityEvent<RewardStructure> { }
+    public class IntEvent : UnityEvent<int> { }
     public class ByteArrayEvent : UnityEvent<byte[]> { }
     public class FloatEvent: UnityEvent<float>{ }
-
+    public class ListFOfByteArraysEvent: UnityEvent<List<byte[]>> { }
     public class ScreenResolutionEvent: UnityEvent<int, int> { }
 
 
     public StringEvent onUpdatedAction;
     public StringEvent onParametersChange;
-    public RewardStructureEvent onRewardStructureChange;
-    public ByteArrayEvent onObservationReady;
+    public IntEvent onRewardStructureChange;
+    public ByteArrayEvent onPixelsObservationReady;
     public FloatEvent onNewMoveSnapReceived;
     public FloatEvent onNewRotateSnapReceived;
     public ScreenResolutionEvent onNewScreenResolution;
+    public ListFOfByteArraysEvent onFeaturesObservationReady;
 
 
     private void Awake()
@@ -54,7 +56,8 @@ public class EventManager : MonoBehaviour
 
             onUpdatedAction = new();
             onParametersChange = new();
-            onObservationReady = new();
+            onPixelsObservationReady = new();
+            onFeaturesObservationReady = new();
 
             onNewMoveSnapReceived = new();
             onNewRotateSnapReceived = new();

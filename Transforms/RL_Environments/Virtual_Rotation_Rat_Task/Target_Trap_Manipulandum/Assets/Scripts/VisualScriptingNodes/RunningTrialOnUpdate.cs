@@ -41,7 +41,7 @@ public class RunningTrialOnUpdate : Unit
 
     protected override void Definition()
     {
-
+        //RatController ratController = GameObject.Find("Rat").GetComponent<RatController>();
         int number_of_rotations = 0;
 
         Manipulandum = ValueInput<GameObject>("Manipulandum Object");

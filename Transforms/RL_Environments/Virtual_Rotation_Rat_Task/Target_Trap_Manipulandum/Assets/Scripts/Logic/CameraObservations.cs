@@ -66,7 +66,7 @@ public class CameraObservations : MonoBehaviour
 
             byte[] pngBytes = ImageConversion.EncodeArrayToPNG(array, format, (uint)Screen.width, (uint)Screen.height);
             
-            EventManager.Instance.onObservationReady.Invoke(pngBytes);
+            EventManager.Instance.onPixelsObservationReady.Invoke(pngBytes);
              
         }
         catch (Exception e)

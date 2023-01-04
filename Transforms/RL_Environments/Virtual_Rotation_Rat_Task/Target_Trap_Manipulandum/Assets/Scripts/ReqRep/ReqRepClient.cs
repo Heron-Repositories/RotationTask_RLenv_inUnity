@@ -3,6 +3,7 @@ using NetMQ;
 using NetMQ.Sockets;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -24,10 +25,13 @@ public class ReqRepClient : MonoBehaviour
     private ReqRepListener _listener;
     private ClientStatus _clientStatus = ClientStatus.Inactive;
 
-    private byte[] observationArray;
+    private byte[] observationPixelsArray;
     private bool newObservationArrayReady = false;
     private int reward = 0;
     private bool touchRewardPriority = false;
+    private List<byte[]> observationFeaturesList;
+
+    private List<string> comProtocol;
 
     private void Start()
     {
@@ -39,8 +43,14 @@ public class ReqRepClient : MonoBehaviour
         EventManager.Instance.onStopClient.AddListener(OnStopClient);
         EventManager.Instance.onClientStopped.AddListener(() => _clientStatus = ClientStatus.Inactive);
 
-        EventManager.Instance.onObservationReady.AddListener(SaveNewObservation);
+        EventManager.Instance.onPixelsObservationReady.AddListener(SaveNewPixelsObservation);
         EventManager.Instance.onRewardStructureChange.AddListener(SaveNewReward);
+        EventManager.Instance.onFeaturesObservationReady.AddListener(SaveNewFeaturesObservation);
+
+
+        comProtocol = GameObject.Find("Rat").GetComponent<CommunicationProtocol>().observationsComProtocol;
+
+        observationFeaturesList = new List<byte[]>() {BitConverter.GetBytes(0.0f)};
 
         OnStartClient();
     }
@@ -71,35 +81,74 @@ public class ReqRepClient : MonoBehaviour
 
     private void HandleResponseMessage(string message, ResponseSocket repSocket)
     {
-        while (!newObservationArrayReady)
-        {
-            //Debug.Log("B. Waiting for new Observation Array to be ready");
-        }
         TimeSpan timeout = new(0, 0, 1);
-        repSocket.TrySendFrame(timeout, observationArray, true);
-        string stringReward = reward.ToString();
-        repSocket.TrySendFrame(timeout, stringReward, false);
+
+        if (message == comProtocol[0]) // "Pixels"
+            SendPixels(repSocket, timeout);
+
+        if (message == comProtocol[1]) // "Features"
+            SendFeatures(repSocket, timeout);
+
+        if (message == comProtocol[2]) // "Everything"
+        {
+            SendPixels(repSocket, timeout);
+            SendFeatures(repSocket, timeout);
+        }
+
+        SendReward(repSocket, timeout);
+
+    }
+
+    private void SendPixels(ResponseSocket repSocket, TimeSpan timeout)
+    {
+        while (!newObservationArrayReady) {}
+        
+        repSocket.TrySendFrame(timeout, observationPixelsArray, true);
 
         newObservationArrayReady = false;
     }
 
-    private void SaveNewObservation(byte[] array)
+    private void SendFeatures(ResponseSocket repSocket, TimeSpan timeout)
     {
-        observationArray = array;
+        foreach(byte[] feature in observationFeaturesList)
+        {
+            repSocket.TrySendFrame(timeout, feature, true);
+        }
+        
+    }
+
+    private void SendReward(ResponseSocket repSocket, TimeSpan timeout)
+    {
+        string stringReward = reward.ToString();
+        repSocket.TrySendFrame(timeout, stringReward, false);
+    }
+
+
+    private void SaveNewPixelsObservation(byte[] array)
+    {
+        observationPixelsArray = array;
         newObservationArrayReady = true;
     }
 
-    private void SaveNewReward(RewardStructure _rew_struct)
+    private void SaveNewReward(int new_reward)
     {
         if(!touchRewardPriority)
-            reward = (int)_rew_struct;
+            reward = new_reward;
         touchRewardPriority = false;
     }
 
+    // This is called from the Visual Scripting Graph in the VRGame Object,
+    // by the Transition (Success State -> Running_Trial State), 
+    // if there is a Reward Port touched (OnEnter) event.
     private void SaveNewRewardDueToPortTouched()
     {
-        reward = (int)RewardStructure.PokedAfterTarget;
+        reward = RewardStructure.Instance.PokedAfterTarget;
         touchRewardPriority = true;
+    }
+
+    private void SaveNewFeaturesObservation(List<byte[]> features)
+    {
+        observationFeaturesList = features;
     }
 
 }

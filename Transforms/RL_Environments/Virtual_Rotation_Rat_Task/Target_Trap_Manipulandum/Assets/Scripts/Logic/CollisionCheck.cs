@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 
 public class CollisionCheck : MonoBehaviour
 {
-    private Rigidbody rigidbody;
+    private Rigidbody this_rigidbody;
 
     public List<GameObject> ObjectsCanCollideWith;
 
@@ -12,18 +12,17 @@ public class CollisionCheck : MonoBehaviour
 
     private void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        this_rigidbody = GetComponent<Rigidbody>();
         gameobject_name = transform.gameObject.name;
     }
 
     public bool ShouldIMove(Vector3 direction, float distance)
     {
         RaycastHit hit;
-        if (rigidbody.SweepTest(direction, out hit, distance))
+        if (this_rigidbody.SweepTest(direction, out hit, distance))
         {
             if (hit.transform.name != "RewardPort")
             {
-                //Debug.Log($"ShouldIMove returned True by touching {hit.transform.name}");
                 return true;
             }
                 
@@ -66,15 +65,12 @@ public class CollisionCheck : MonoBehaviour
         {
             case "LeftButton":
                 CustomEvent.Trigger(transform.gameObject, "LeftButtonPressed");
-                //Debug.Log("LeftButton Is Being Pressed");
                 break;
             case "RightButton":
                 CustomEvent.Trigger(transform.gameObject, "RighttButtonPressed");
-                //Debug.Log("RightButton Is Being Pressed");
                 break;
             case "RewardPort":
                 CustomEvent.Trigger(transform.gameObject, "RewardPortPoked");
-                //Debug.Log("RewardPort Is Being Poked");
                 break;
         }
     }
@@ -85,15 +81,12 @@ public class CollisionCheck : MonoBehaviour
         {
             case "LeftButton":
                 CustomEvent.Trigger(transform.gameObject, "LeftButtonUnPressed");
-                //Debug.Log("LeftButton Is Being UnPressed");
                 break;
             case "RightButton":
                 CustomEvent.Trigger(transform.gameObject, "RighttButtonUnPressed");
-                //Debug.Log("RightButton Is Being UnPressed");
                 break;
             case "RewardPort":
                 CustomEvent.Trigger(transform.gameObject, "RewardPortUnPoked");
-                //Debug.Log("RewardPort Is Being UnPoked");
                 break;
         }
     }

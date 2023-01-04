@@ -65,13 +65,13 @@
     <Compile Include="Assets\Scripts\WindowRelated\WriteLogToFile.cs" />
     <Compile Include="Assets\Scripts\VisualScriptingNodes\RunningTrialOnUpdate.cs" />
     <Compile Include="Assets\Scripts\PubSub\PubSubClient.cs" />
+    <Compile Include="Assets\Scripts\Logic\RewardStructure.cs" />
     <Compile Include="Assets\Scripts\Logic\CollisionCheck.cs" />
     <Compile Include="Assets\Scripts\VisualScriptingNodes\RunningTrialOnEnter.cs" />
     <Compile Include="Assets\Scripts\PubSub\PubSubListener.cs" />
     <Compile Include="Assets\Scripts\ReqRep\ReqRepClient.cs" />
     <Compile Include="Assets\Scripts\Logic\EventManager.cs" />
     <Compile Include="Assets\Scripts\Logic\CommunicationProtocol.cs" />
-    <Compile Include="Assets\Scripts\Logic\RewardStructure.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Materials\Greyscale.shader" />
