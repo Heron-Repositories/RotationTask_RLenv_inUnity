@@ -8,8 +8,6 @@ public class CommunicationProtocol : MonoBehaviour
     public readonly List<string> observationsComProtocol = new List<string>() { "Pixels", "Features", "Everything" };
     public readonly OrderedDictionary featuresComProtocol = new OrderedDictionary();
 
-    // The Features Observation is a List of floats. The first float one is the number of remaining numbers (features)
-
     void Start()
     {
         actionAndParametersComProtocol.Add("Parameter", new OrderedDictionary() { 

@@ -63,11 +63,11 @@
     <Compile Include="Assets\Scripts\ReqRep\ReqRepListener.cs" />
     <Compile Include="Assets\Scripts\Logic\CircularBuffer.cs" />
     <Compile Include="Assets\Scripts\WindowRelated\WriteLogToFile.cs" />
-    <Compile Include="Assets\Scripts\VisualScriptingNodes\RunningTrialOnUpdate.cs" />
+    <Compile Include="Assets\Scripts\VisualScriptingNodes\RunningTrialOnUpdate_ButtonsNoPoke.cs" />
     <Compile Include="Assets\Scripts\PubSub\PubSubClient.cs" />
     <Compile Include="Assets\Scripts\Logic\RewardStructure.cs" />
     <Compile Include="Assets\Scripts\Logic\CollisionCheck.cs" />
-    <Compile Include="Assets\Scripts\VisualScriptingNodes\RunningTrialOnEnter.cs" />
+    <Compile Include="Assets\Scripts\VisualScriptingNodes\RunningTrialOnEnter_ButtonsNoPoke.cs" />
     <Compile Include="Assets\Scripts\PubSub\PubSubListener.cs" />
     <Compile Include="Assets\Scripts\ReqRep\ReqRepClient.cs" />
     <Compile Include="Assets\Scripts\Logic\EventManager.cs" />

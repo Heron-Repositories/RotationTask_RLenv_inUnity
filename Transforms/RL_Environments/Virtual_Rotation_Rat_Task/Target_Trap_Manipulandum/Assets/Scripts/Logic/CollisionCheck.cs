@@ -21,8 +21,9 @@ public class CollisionCheck : MonoBehaviour
         RaycastHit hit;
         if (this_rigidbody.SweepTest(direction, out hit, distance))
         {
-            if (hit.transform.name != "RewardPort")
+            if (hit.transform.name != "RewardPort" && hit.transform.name != "Hole")
             {
+                Debug.Log(hit.transform.name);
                 return true;
             }
                 
@@ -72,6 +73,9 @@ public class CollisionCheck : MonoBehaviour
             case "RewardPort":
                 CustomEvent.Trigger(transform.gameObject, "RewardPortPoked");
                 break;
+            case "Hole":
+                CustomEvent.Trigger(transform.gameObject, "HolePoked");
+                break;
         }
     }
 
@@ -87,6 +91,9 @@ public class CollisionCheck : MonoBehaviour
                 break;
             case "RewardPort":
                 CustomEvent.Trigger(transform.gameObject, "RewardPortUnPoked");
+                break;
+            case "Hole":
+                CustomEvent.Trigger(transform.gameObject, "HoleUnPoked");
                 break;
         }
     }

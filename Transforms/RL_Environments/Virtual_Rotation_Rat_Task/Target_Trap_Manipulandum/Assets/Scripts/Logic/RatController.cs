@@ -190,14 +190,14 @@ public class RatController : MonoBehaviour
                     case var value when value == all_values_in_action[0]: // "Extend"
                         if (!LeftPawExtended)
                         {
-                            transform.Find("LeftPaw").Translate(new Vector3(0, 0, 1.3f));
+                            transform.Find("LeftPaw").Translate(new Vector3(0, 0, 0.6f));
                             LeftPawExtended = true;
                         }
                         break;
                     case var value when value == all_values_in_action[1]: // "Retrieve"
                         if (LeftPawExtended)
                         {
-                            transform.Find("LeftPaw").Translate(new Vector3(0, 0, -1.3f));
+                            transform.Find("LeftPaw").Translate(new Vector3(0, 0, -0.6f));
                             LeftPawExtended = false;
                         }
                         break;
@@ -214,14 +214,14 @@ public class RatController : MonoBehaviour
                         if (!RightPawExtended)
                         {
                             RightPawExtended = true;
-                            transform.Find("RightPaw").Translate(new Vector3(0, 0, 1.3f));
+                            transform.Find("RightPaw").Translate(new Vector3(0, 0, 0.6f));
                         }
                         break;
                     case var value when value == all_values_in_action[1]: // "Retrieve"
                         if (RightPawExtended)
                         {
                             RightPawExtended = false;
-                            transform.Find("RightPaw").Translate(new Vector3(0, 0, -1.3f));
+                            transform.Find("RightPaw").Translate(new Vector3(0, 0, -0.6f));
                         }
                         break;
                 }

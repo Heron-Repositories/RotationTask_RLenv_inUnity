@@ -7,7 +7,7 @@ using UnityEngine;
 [UnitSubtitle("Activate Objects and Generate Random Initial Rotations")]
 
 //[TypeIcon(typeof(Codebase))]
-public class RunningTrialOnEnter : Unit
+public class RunningTrialOnEnter_ButtonsNoPoke : Unit
 {
     [DoNotSerialize]
     public ControlInput triggerOnEnter;

@@ -57,31 +57,39 @@ def initialise(_worker_object):
 
     if not cu.first_communication_with_unity(screen_res, translation_snap, rotation_snap):
         return False
-
+    
     initialised = True
+
     return True
 
 
 def work_function(data, parameters, savenodestate_update_substate_df):
 
+    global observation_type
+
     topic = data[0]
 
     message = data[1:]  # data[0] is the topic
-    message = Socket.reconstruct_array_from_bytes_message(message)
+    message = Socket.reconstruct_data_from_bytes_message(message)
+
     action_type = message[0].split(',')[0].replace(' ', '')
     action_value = message[0].split(',')[1].replace(' ', '')
-
+    
+    
     cu.do_action(action_type, action_value)
 
     # savenodestate_update_substate_df(image__shape=message.shape)
 
     gu.accurate_delay(30)
-    result = cu.get_observation('Pixels')
-
-    if result is None:
-        result = [np.array(ct.IGNORE)]
-    else:
-        result = [np.ascontiguousarray(result)]
+    reward, pixels, features, dt_of_frame = cu.get_observation(observation_type)
+    
+    result = [np.array([ct.IGNORE])]*3
+    if reward is not None:
+        result[0] = np.array([reward])
+    if pixels is not None:
+        result[1] = np.ascontiguousarray(pixels)
+    if features is not None:
+        result[2] = features
 
     return result
 

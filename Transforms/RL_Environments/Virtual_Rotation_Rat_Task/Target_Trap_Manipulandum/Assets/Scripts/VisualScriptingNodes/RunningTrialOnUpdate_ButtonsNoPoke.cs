@@ -7,7 +7,7 @@ using UnityEngine;
 [UnitSubtitle("Rotate the Manipulandum if Buttons are touched")]
 
 //[TypeIcon(typeof(Codebase))]
-public class RunningTrialOnUpdate : Unit
+public class RunningTrialOnUpdate_ButtonsNoPoke : Unit
 {
     [DoNotSerialize]
     public ControlInput triggerOnUpdate;
@@ -37,6 +37,9 @@ public class RunningTrialOnUpdate : Unit
     public ValueInput RightButtonState;
 
     [DoNotSerialize]
+    public ValueInput HoleState;
+
+    [DoNotSerialize]
     public ValueInput NewTrial;
 
     protected override void Definition()
@@ -53,6 +56,7 @@ public class RunningTrialOnUpdate : Unit
 
         LeftButtonState = ValueInput<bool>("LeftButtonState");
         RightButtonState = ValueInput<bool>("RightButtonState");
+        HoleState = ValueInput<bool>("HoleState");
 
         NewTrial = ValueInput<bool>("New Trial Started");
 
@@ -65,6 +69,7 @@ public class RunningTrialOnUpdate : Unit
 
             bool left_button_state = flow.GetValue<bool>(LeftButtonState);
             bool right_button_state = flow.GetValue<bool>(RightButtonState);
+            bool hole_state = flow.GetValue<bool>(HoleState);
 
             int initial_man_angle = (int)flow.GetValue<float>(InitialManipulandumAngle);
             int target_angle = (int)flow.GetValue<float>(TargetAngle);
@@ -105,6 +110,7 @@ public class RunningTrialOnUpdate : Unit
         Requirement(RotationSpeed, triggerOnUpdate);
         Requirement(LeftButtonState, triggerOnUpdate);
         Requirement(RightButtonState, triggerOnUpdate);
+        Requirement(HoleState, triggerOnUpdate);
     }
 
     private bool CheckIfManReachedSomething(int man_angle, int something_angle, int threshold)
