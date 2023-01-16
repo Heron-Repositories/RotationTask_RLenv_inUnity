@@ -48,7 +48,10 @@ public class CollisionCheck : MonoBehaviour
         {
             if (ObjectsCanCollideWith[i] == other.gameObject && gameobject_name != "RewardPort")
                 SendAppropriatePressSignal();
+            if (gameobject_name == "RewardPort")
+                SendAppropriateUnPressSignal();
         }
+
     }
 
     private void OnTriggerExit(Collider other)

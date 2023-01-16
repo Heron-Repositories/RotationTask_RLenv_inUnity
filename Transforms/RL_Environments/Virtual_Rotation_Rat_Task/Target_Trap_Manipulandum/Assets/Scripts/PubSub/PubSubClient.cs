@@ -42,6 +42,22 @@ public class PubSubClient : MonoBehaviour
             OnStopClient();
     }
 
+    // Functions that deal with the starting and ending of the PubSub client
+    private void OnStartClient()
+    {
+        _clientStatus = ClientStatus.Activating;
+        _listener.Start();
+    }
+
+    private void OnStopClient()
+    {
+        _clientStatus = ClientStatus.Deactivating;
+        _listener.Stop();
+    }
+
+    /// <summary>
+    /// <c>HandleMessage</c> is called when the agent publishises that it has either done an action or needs a controllable parameter of the environment changed.
+    /// </summary>
     private void HandleMessage(string message)
     {
         string message_data = message.Substring(message.IndexOf("=")).Substring(1);
@@ -57,15 +73,5 @@ public class PubSubClient : MonoBehaviour
         }
     }
 
-    private void OnStartClient()
-    {
-        _clientStatus = ClientStatus.Activating;
-        _listener.Start();
-    }
-
-    private void OnStopClient()
-    {
-        _clientStatus = ClientStatus.Deactivating;
-        _listener.Stop();
-    }
+    
 }

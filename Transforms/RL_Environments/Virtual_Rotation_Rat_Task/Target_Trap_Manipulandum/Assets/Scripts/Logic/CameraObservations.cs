@@ -29,11 +29,18 @@ public class CameraObservations : MonoBehaviour
         PrepareNewObservation();
     }
 
+
+    /// <summary>
+    /// <c>PrepareNewObservation</c> is called when the environment has finished updating itself and can now generate the new camera observation to pass to the agent if required.
+    /// </summary>
     private void PrepareNewObservation()
     {
         observationCamera.Render();
         CaptureScreenShot();
     }
+
+    // The following two functions will render the camera and pass the generated pixels to a  RenderTexture. That will be encoded into an PNG, and those bytes will be sent
+    // to the ReqRepClient to keep in memory until the agents asks for a camera observation
 
     public void CaptureScreenShot()
     {

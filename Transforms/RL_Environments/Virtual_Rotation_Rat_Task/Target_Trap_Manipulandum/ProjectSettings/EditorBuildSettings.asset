@@ -5,7 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TTM_ButtonsNoPoke.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 0
+    path: Assets/Scenes/TTM_FindReward.unity
+    guid: 8a5d6ca2fda23e54fb40dce79e447506
+  - enabled: 1
+    path: Assets/Scenes/TTM_ButtonsWithPoke.unity
+    guid: 7aa3070d60a25034dbd1c9f0626c5267
+  - enabled: 0
+    path: Assets/Scenes/TTM_WaitForReward.unity
+    guid: b5b7e0abc39f2bd4f8e91c45b68a39ba
   m_configObjects: {}

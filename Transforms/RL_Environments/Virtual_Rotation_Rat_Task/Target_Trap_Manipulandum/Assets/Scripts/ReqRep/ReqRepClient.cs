@@ -62,6 +62,8 @@ public class ReqRepClient : MonoBehaviour
             OnStopClient();
     }
 
+
+    // Functions that deal with starting and stopping the Request Reply Client
     private void OnStartClient()
     {
         _clientStatus = ClientStatus.Activating;
@@ -74,11 +76,18 @@ public class ReqRepClient : MonoBehaviour
         _listener.Stop();
     }
 
+    /// <summary>
+    /// <c>HandleInitMessage</c> is called when the agent sents a response as an initial handshake between the agent's process and the environment's (this game) process.
+    /// </summary>
     private void HandleInitMessage(string message)
     {
         Debug.Log(message);
     }
 
+    /// <summary>
+    /// <c>HandleResponseMessage</c> is called when the agent sents a request for an observation to the environment.
+    /// </summary>
+    /// <param name="message">the message from the agent describing what observation it needs. The possible values should be defined in the CommunicationProtocol</param>
     private void HandleResponseMessage(string message, ResponseSocket repSocket)
     {
         TimeSpan timeout = new(0, 0, 1);
@@ -98,6 +107,8 @@ public class ReqRepClient : MonoBehaviour
         SendReward(repSocket, timeout);
 
     }
+
+    // Functions that deal with the different requests by the agent (like camera observations, feature observations and rewards)
 
     private void SendPixels(ResponseSocket repSocket, TimeSpan timeout)
     {
@@ -121,8 +132,14 @@ public class ReqRepClient : MonoBehaviour
     {
         string stringReward = reward.ToString();
         repSocket.TrySendFrame(timeout, stringReward, false);
+        if (reward == RewardStructure.Instance.RewPortPokedCorrectly)
+        {
+            reward = RewardStructure.Instance.NotMoved;
+        }
     }
 
+    // Functions that create the buffers for the different responses of the environment to the agent (camera obesrvations, features observations and reward)
+    // These functions can change according to a particular environment requirements
 
     private void SaveNewPixelsObservation(byte[] array)
     {
@@ -142,8 +159,9 @@ public class ReqRepClient : MonoBehaviour
     // if there is a Reward Port touched (OnEnter) event.
     private void SaveNewRewardDueToPortTouched()
     {
-        reward = RewardStructure.Instance.PokedAfterTarget;
+        reward = RewardStructure.Instance.RewPortPokedCorrectly;
         touchRewardPriority = true;
+        Debug.Log(reward);
     }
 
     private void SaveNewFeaturesObservation(List<byte[]> features)

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+/// This is a singleton that defines the events that are passed between the game's objects (not the ones defined and used within the Visual Scripting system if that is utilised)
+/// </summary>
 public class EventManager : MonoBehaviour
 {
     public static EventManager Instance;
@@ -17,6 +20,8 @@ public class EventManager : MonoBehaviour
     public UnityEvent onLeftButtonUnPressed;
     public UnityEvent onRightButtonUnPressed;
     public UnityEvent onRewardPortTouched;
+    public UnityEvent onReseting;
+    public UnityEvent onResetDone;
 
     [System.Serializable]
     public class StringEvent : UnityEvent<string> { }
@@ -53,6 +58,8 @@ public class EventManager : MonoBehaviour
             onLeftButtonUnPressed = new();
             onRightButtonUnPressed = new();
             onRewardPortTouched = new();
+            onReseting = new();
+            onResetDone = new();
 
             onUpdatedAction = new();
             onParametersChange = new();

@@ -18,14 +18,15 @@ Exec = os.path.abspath(__file__)
 Properties of the generated Node
 """
 BaseName = 'Virtual Rotation Rat Task'   # The base name can have spaces.
-NodeAttributeNames = ['Parameters', 'Action', 'Reward', 'Pixels Observation', 'Features Observation']
+NodeAttributeNames = ['Parameters', 'Action', 'Pixels Observation', 'Reward & Features Observation']
 
-NodeAttributeType = ['Static', 'Input', 'Output', 'Output', 'Output Dict']
+NodeAttributeType = ['Static', 'Input', 'Output', 'Output Dict']
 
-ParameterNames = ['Screen Resolution X', 'Screen Resolution Y', 'Translation Snap', 'Rotation Snap', 'Observation Type']
-ParameterTypes = ['int', 'int', 'float', 'int', 'list']
+ParameterNames = ['Game', 'Screen Resolution X', 'Screen Resolution Y', 'Translation Snap', 'Rotation Snap',
+                  'Observation Type']
+ParameterTypes = ['str', 'int', 'int', 'float', 'int', 'list']
 
-ParametersDefaultValues = [100, 100, 0.1, 10, ['Pixels', 'Parameters', 'Everything']]
+ParametersDefaultValues = ['TTM_FindReward', 100, 100, 0.1, 10, ['Pixels', 'Parameters', 'Everything']]
 
 # The following line needs to exist with the correct name for the xxx_worker.py script
 WorkerDefaultExecutable = os.path.join(os.path.dirname(Exec), 'virtual_rotation_rat_task_worker.py')
