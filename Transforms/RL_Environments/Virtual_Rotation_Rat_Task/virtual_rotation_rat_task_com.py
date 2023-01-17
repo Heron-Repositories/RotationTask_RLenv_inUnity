@@ -18,9 +18,9 @@ Exec = os.path.abspath(__file__)
 Properties of the generated Node
 """
 BaseName = 'Virtual Rotation Rat Task'   # The base name can have spaces.
-NodeAttributeNames = ['Parameters', 'Action', 'Pixels Observation', 'Reward & Features Observation']
+NodeAttributeNames = ['Parameters', 'Action', 'Reward and Observations Dict']
 
-NodeAttributeType = ['Static', 'Input', 'Output', 'Output Dict']
+NodeAttributeType = ['Static', 'Input', 'Output']
 
 ParameterNames = ['Game', 'Screen Resolution X', 'Screen Resolution Y', 'Translation Snap', 'Rotation Snap',
                   'Observation Type']

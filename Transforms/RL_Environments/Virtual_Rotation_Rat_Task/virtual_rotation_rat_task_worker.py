@@ -51,6 +51,7 @@ def get_parameters(_worker_object):
 
 def initialise(_worker_object):
     global initialised
+    global observation_type
 
     if not get_parameters(_worker_object):
         return False
@@ -61,7 +62,7 @@ def initialise(_worker_object):
     if not cu.start_unity_exe(node_dir, game):
         return False
 
-    if not cu.first_communication_with_unity(screen_res, translation_snap, rotation_snap):
+    if not cu.first_communication_with_unity(screen_res, translation_snap, rotation_snap, observation_type):
         return False
     
     initialised = True
@@ -70,7 +71,6 @@ def initialise(_worker_object):
 
 
 def work_function(data, parameters, savenodestate_update_substate_df):
-
     global observation_type
 
     topic = data[0]
@@ -80,41 +80,39 @@ def work_function(data, parameters, savenodestate_update_substate_df):
 
     command_and_typevalue = message[0].split('=')
     command = command_and_typevalue[0]
-    type = command_and_typevalue[1].split(':')[0]
-    value = command_and_typevalue[1].split(':')[1]
+    command_type = command_and_typevalue[1].split(':')[0]
+    command_value = command_and_typevalue[1].split(':')[1]
 
-    # Send the action to Unity
+    # Send the action or parameter to Unity
     if command == 'Parameter':
-        cu.change_parameter(type, value)
+        cu.change_parameter(command_type, command_value)
     if command == 'Action':
-        cu.do_action(type, value)
+        cu.do_action(command_type, command_value)
 
     # Get the reward and observations from Unity
-    gu.accurate_delay(3)  # This delay is required so that the observation is the current one and to the previous one.
     reward, pixels, features, dt_of_frame = cu.get_observation(observation_type)
-
     print(dt_of_frame)
 
     # Generate the result
-    result = [np.array([ct.IGNORE])]*2
-    if pixels is not None:
-        result[0] = np.ascontiguousarray(pixels)
+    pixels_features_reward_dict = {}
+    result = [np.array([ct.IGNORE])]
     if features is not None:
-        features_reward_dict = copy.copy(features)
-    else:
-        features_reward_dict = {}
+        pixels_features_reward_dict = copy.copy(features)
+    if pixels is not None:
+        pixels_features_reward_dict['Pixels'] = np.ascontiguousarray(pixels).tolist()
     if reward is not None:
-        features_reward_dict['Reward'] = reward
+        pixels_features_reward_dict['Reward'] = reward
 
-    if len(features_reward_dict) > 0:
-        result[1] = features_reward_dict
+    if len(pixels_features_reward_dict) > 0:
+        result = [pixels_features_reward_dict]
+        #print(np.array(result[0]['Pixels']).shape)
 
     # Deal with the substate
-    command_features_reward = copy.copy(features_reward_dict)
+    command_features_reward = copy.copy(pixels_features_reward_dict)
     if command == 'Parameter':
-        command_features_reward['parameter'] = [type, value]
+        command_features_reward['parameter'] = [command_type, command_value]
     if command == 'Action':
-        command_features_reward['action'] = [type, value]
+        command_features_reward['action'] = [command_type, command_value]
     savenodestate_update_substate_df(**command_features_reward)
 
     return result
