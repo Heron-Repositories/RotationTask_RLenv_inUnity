@@ -46,9 +46,9 @@ public class CollisionCheck : MonoBehaviour
     {
         for (int i = 0; i < ObjectsCanCollideWith.Count; i++)
         {
-            if (ObjectsCanCollideWith[i] == other.gameObject && gameobject_name != "RewardPort")
+            if (ObjectsCanCollideWith[i] == other.gameObject && gameobject_name != "RewardPort" && !gameobject_name.Contains("Area"))
                 SendAppropriatePressSignal();
-            if (gameobject_name == "RewardPort")
+            if (gameobject_name == "RewardPort" || gameobject_name.Contains("Area"))
                 SendAppropriateUnPressSignal();
         }
 
@@ -79,6 +79,9 @@ public class CollisionCheck : MonoBehaviour
             case "Hole":
                 CustomEvent.Trigger(transform.gameObject, "HolePoked");
                 break;
+            case string value when value.Contains("AreaHigh"):
+                CustomEvent.Trigger(transform.gameObject, "AreaHighEntered");
+                break;
         }
     }
 
@@ -97,6 +100,9 @@ public class CollisionCheck : MonoBehaviour
                 break;
             case "Hole":
                 CustomEvent.Trigger(transform.gameObject, "HoleUnPoked");
+                break;
+            case string value when value.Contains("AreaHigh"):
+                CustomEvent.Trigger(transform.gameObject, "AreaHighLeft");
                 break;
         }
     }

@@ -149,6 +149,7 @@ public class RatController : MonoBehaviour
                         if (!RightPawExtended && !LeftPawExtended && !headCollisionCheck.ShouldIMove(transform.forward, moveSnap))
                         {
                             transform.Translate(new Vector3(0, 0, moveSnap));
+                            RepositionInGrid();
                             EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.Moved);
                         }
                         else
@@ -158,6 +159,7 @@ public class RatController : MonoBehaviour
                         if (!RightPawExtended && !LeftPawExtended && !bodyCollisionCheck.ShouldIMove(-transform.forward, moveSnap))
                         {
                             transform.Translate(new Vector3(0, 0, -moveSnap));
+                            RepositionInGrid();
                             EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.Moved);
                         }
                         else
@@ -320,5 +322,23 @@ public class RatController : MonoBehaviour
         return features_to_send;
     }
 
+    void RepositionInGrid()
+    {
+        float x = transform.position.x;
+        float z = transform.position.z;
+
+        string str_snap = moveSnap.ToString();
+        if (moveSnap < 0)
+        {
+            str_snap = str_snap.Replace("-", "");
+        }
+        str_snap = str_snap.Replace(".", "");
+        int removeDigits = str_snap.Length - 1;
+
+        float rounded_x = (float)Math.Round(x, removeDigits);
+        float rounded_z = (float)Math.Round(z, removeDigits);
+
+        transform.position = new Vector3(rounded_x, transform.position.y, rounded_z);
+    }
 
 }

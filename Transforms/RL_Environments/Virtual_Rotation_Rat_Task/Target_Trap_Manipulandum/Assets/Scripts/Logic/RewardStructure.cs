@@ -13,12 +13,18 @@ public class RewardStructure : MonoBehaviour
     public int NotMoved;
     public int Moved;
     public int RewPortPokedCorrectly;
+    public int AreaHighInterest;
+    public int AreaMedInterest;
+    public int AreaLowInterest;
 
     private void Reset()
     {
         NotMoved = 0;
         Moved = -1;
         RewPortPokedCorrectly = 30;
+        AreaHighInterest = 0;
+        AreaMedInterest = 0;
+        AreaLowInterest = 0;
     }
 
     private void Awake()

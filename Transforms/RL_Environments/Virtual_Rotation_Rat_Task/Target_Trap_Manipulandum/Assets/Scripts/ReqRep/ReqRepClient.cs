@@ -164,6 +164,24 @@ public class ReqRepClient : MonoBehaviour
         Debug.Log(reward);
     }
 
+    private void SaveNewRewardDueToAreaTouched(string area_type)
+    {
+        switch (area_type)
+        {
+            case string value when value.Contains("High"):
+                reward = RewardStructure.Instance.AreaHighInterest;
+                break;
+            case string value when value.Contains("Med"):
+                reward = RewardStructure.Instance.AreaMedInterest;
+                break;
+            case string value when value.Contains("Low"):
+                reward = RewardStructure.Instance.AreaLowInterest;
+                break;
+        }
+        touchRewardPriority = true;
+        Debug.Log(reward);
+    }
+
     private void SaveNewFeaturesObservation(List<byte[]> features)
     {
         observationFeaturesList = features;
