@@ -1,4 +1,4 @@
-
+import profile
 import sys
 from os import path
 
@@ -10,19 +10,25 @@ sys.path.insert(0, path.dirname(current_dir))
 
 import numpy as np
 import copy
+import time
 from Heron.communication.socket_for_serialization import Socket
 from Heron import general_utils as gu, constants as ct
+from Heron.gui.visualisation_dpg import VisualisationDPG
 import commands_to_unity as cu
 
+
+visualisation_dpg: VisualisationDPG
 game: str
 screen_res = []
 observation_type: str
 translation_snap: float
 rotation_snap: int
 initialised = False
+reward_history = []
 
 
 def get_parameters(_worker_object):
+    global visualisation_dpg
     global game
     global screen_res
     global observation_type
@@ -31,22 +37,45 @@ def get_parameters(_worker_object):
 
     try:
         parameters = _worker_object.parameters
-        game = parameters[0]
-        screen_res_x = parameters[1]
-        screen_res_y = parameters[2]
-        translation_snap = parameters[3]
-        rotation_snap = parameters[4]
-        observation_type = parameters[5]
+        game = parameters[1]
+        screen_res_x = parameters[2]
+        screen_res_y = parameters[3]
+        translation_snap = parameters[4]
+        rotation_snap = parameters[5]
+        observation_type = parameters[6]
     except:
         return False
 
     screen_res.append(screen_res_x)
     screen_res.append(screen_res_y)
 
-    _worker_object.savenodestate_create_parameters_df(game=game, screen_res_x=screen_res_x,screen_res_y=screen_res_y,
+    visualisation_dpg = VisualisationDPG(_node_name=_worker_object.node_name, _node_index=_worker_object.node_index,
+                                         _visualisation_type='Single Pane Plot', _buffer=100,
+                                         _x_axis_label='Latest Actions',
+                                         _y_axis_base_label='Cumulative Reward',
+                                         _base_plot_title='Cumulative Reward over Actions')
+
+    visualisation_dpg.visualisation_on = parameters[0]
+
+    _worker_object.savenodestate_create_parameters_df(visualisation_on=visualisation_dpg.visualisation_on, game=game,
+                                                      screen_res_x=screen_res_x,screen_res_y=screen_res_y,
                                                       translation_snap=translation_snap, rotation_snap=rotation_snap,
                                                       observation_type=observation_type)
     return True
+
+
+def update_reward_buffer_for_vis(reward):
+    global reward_history
+    reward = float(reward)
+
+    if len(reward_history) > 1:
+        reward_history.append(reward_history[-1] + reward)
+    else:
+        reward_history.append(reward)
+    if len(reward_history) > 100:
+        reward_history.pop(0)
+    if visualisation_dpg.visualisation_on:
+        visualisation_dpg.visualise(np.array(reward_history))
 
 
 def initialise(_worker_object):
@@ -61,10 +90,11 @@ def initialise(_worker_object):
 
     if not cu.start_unity_exe(node_dir, game):
         return False
+    gu.accurate_delay(4000)
 
     if not cu.first_communication_with_unity(screen_res, translation_snap, rotation_snap, observation_type):
         return False
-    
+
     initialised = True
 
     return True
@@ -72,6 +102,10 @@ def initialise(_worker_object):
 
 def work_function(data, parameters, savenodestate_update_substate_df):
     global observation_type
+    global visualisation_dpg
+
+    visualisation_dpg.visualisation_on = parameters[0]
+    result = np.array([ct.IGNORE])
 
     topic = data[0]
 
@@ -88,27 +122,28 @@ def work_function(data, parameters, savenodestate_update_substate_df):
         cu.change_parameter(command_type, command_value)
     if command == 'Action':
         cu.do_action(command_type, command_value)
-
     # Get the reward and observations from Unity
     reward, pixels, features, dt_of_frame = cu.get_observation(observation_type)
     print(dt_of_frame)
+    #print('------')
+
 
     # Generate the result
     pixels_features_reward_dict = {}
     result = [np.array([ct.IGNORE])]
     if features is not None:
-        pixels_features_reward_dict = copy.copy(features)
+        pixels_features_reward_dict = features
     if pixels is not None:
         pixels_features_reward_dict['Pixels'] = np.ascontiguousarray(pixels).tolist()
     if reward is not None:
         pixels_features_reward_dict['Reward'] = reward
+        update_reward_buffer_for_vis(reward)
 
     if len(pixels_features_reward_dict) > 0:
         result = [pixels_features_reward_dict]
-        #print(np.array(result[0]['Pixels']).shape)
 
     # Deal with the substate
-    command_features_reward = copy.copy(pixels_features_reward_dict)
+    command_features_reward = pixels_features_reward_dict
     if command == 'Parameter':
         command_features_reward['parameter'] = [command_type, command_value]
     if command == 'Action':
