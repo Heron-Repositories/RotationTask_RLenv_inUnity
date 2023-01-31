@@ -21,9 +21,8 @@ public class CollisionCheck : MonoBehaviour
         RaycastHit hit;
         if (this_rigidbody.SweepTest(direction, out hit, distance))
         {
-            if (hit.transform.name != "RewardPort" && hit.transform.name != "Hole")
+            if (hit.transform.name != "RewardPort" && hit.transform.name != "Hole" && !hit.transform.name.Contains("Button") && !hit.transform.name.Contains("Area"))
             {
-                Debug.Log(hit.transform.name);
                 return true;
             }
                 

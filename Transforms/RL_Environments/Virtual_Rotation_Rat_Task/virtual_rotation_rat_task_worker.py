@@ -9,8 +9,7 @@ while path.split(current_dir)[-1] != r'Heron':
 sys.path.insert(0, path.dirname(current_dir))
 
 import numpy as np
-import copy
-import time
+from functools import reduce
 from Heron.communication.socket_for_serialization import Socket
 from Heron import general_utils as gu, constants as ct
 from Heron.gui.visualisation_dpg import VisualisationDPG
@@ -25,6 +24,7 @@ translation_snap: float
 rotation_snap: int
 initialised = False
 reward_history = []
+size_of_arena = 5
 
 
 def get_parameters(_worker_object):
@@ -78,6 +78,52 @@ def update_reward_buffer_for_vis(reward):
         visualisation_dpg.visualise(np.array(reward_history))
 
 
+def vectorise_features(features):
+    """
+    Turns the features dictionary into a vector where each value is a normalised feature
+    :param features: the dictionary of features coming from Unity
+    :return: The normalised features vector
+    """
+    global game
+
+    result_vector = []
+    for p in features['Rat Position']:
+        result_vector.append(p / size_of_arena + 0.5)
+    result_vector.append(features['Rat Rotation'][0] / 360)
+    if 'FindReward' not in game and 'ExploreCorners' not in game:
+        result_vector.append(1 if features['Target Trap State'][0] else -1)
+        result_vector.append(features['Manipulandum Angle'][0] / 360)
+    if 'Buttons' in game:
+        result_vector.append(1 if features['Left Paw Extended'][0] else -1)
+        result_vector.append(1 if features['Right Paw Extended'][0] else -1)
+    return result_vector
+
+
+def generate_discrete_state(vectorised_features):
+    global translation_snap
+    global rotation_snap
+    global game
+
+    number_of_bins_per_dimension = [int(np.ceil(size_of_arena / translation_snap)),
+                                    int(np.ceil(size_of_arena / translation_snap)),
+                                    int(np.ceil(360 / rotation_snap))]
+    if 'FindReward' not in game and 'ExploreCorners' not in game:
+        number_of_bins_per_dimension.append(2)
+        number_of_bins_per_dimension.append(360)
+    if 'Buttons' in game:
+        number_of_bins_per_dimension.append(2)
+        number_of_bins_per_dimension.append(2)
+
+    total_num_of_states = 1
+    state_index = int(0)
+    for i, s in enumerate(vectorised_features):
+        state_index = state_index + int(np.ceil(s * reduce(np.multiply, np.array(number_of_bins_per_dimension[:(i+1)]),
+                                                           1)))
+        total_num_of_states *= number_of_bins_per_dimension[i]
+
+    return state_index, total_num_of_states
+
+
 def initialise(_worker_object):
     global initialised
     global observation_type
@@ -122,28 +168,34 @@ def work_function(data, parameters, savenodestate_update_substate_df):
         cu.change_parameter(command_type, command_value)
     if command == 'Action':
         cu.do_action(command_type, command_value)
+
     # Get the reward and observations from Unity
     reward, pixels, features, dt_of_frame = cu.get_observation(observation_type)
-    print(dt_of_frame)
-    #print('------')
-
+    #print(dt_of_frame)
 
     # Generate the result
     pixels_features_reward_dict = {}
+    command_features_reward = {}
     result = [np.array([ct.IGNORE])]
-    if features is not None:
-        pixels_features_reward_dict = features
+
+    if features is not None and len(features) != 0:
+        vectorised_features = vectorise_features(features)
+        state_index, total_num_of_states = generate_discrete_state(vectorised_features)
+        pixels_features_reward_dict['State Index'] = state_index
+
+        command_features_reward = features
+        command_features_reward['state index'] = state_index
+
     if pixels is not None:
         pixels_features_reward_dict['Pixels'] = np.ascontiguousarray(pixels).tolist()
+
     if reward is not None:
         pixels_features_reward_dict['Reward'] = reward
         update_reward_buffer_for_vis(reward)
-
     if len(pixels_features_reward_dict) > 0:
         result = [pixels_features_reward_dict]
 
     # Deal with the substate
-    command_features_reward = pixels_features_reward_dict
     if command == 'Parameter':
         command_features_reward['parameter'] = [command_type, command_value]
     if command == 'Action':

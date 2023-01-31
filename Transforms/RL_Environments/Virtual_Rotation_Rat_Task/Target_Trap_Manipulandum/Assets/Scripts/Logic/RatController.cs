@@ -174,7 +174,7 @@ public class RatController : MonoBehaviour
                 switch (latest_action.Value)
                 {
                     case var value when value == all_values_in_action[0]: // "CW"
-                        if (!RightPawExtended && !LeftPawExtended)
+                        if (!RightPawExtended && !LeftPawExtended && !headCollisionCheck.ShouldIMove(transform.forward, moveSnap))
                         {
                             numberOfRotations += 1;
                             transform.rotation = Quaternion.Euler(0.0f, numberOfRotations * rotateSnap, 0.0f);
@@ -184,7 +184,7 @@ public class RatController : MonoBehaviour
                             EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.NotMoved);
                         break;
                     case var value when value == all_values_in_action[1]: // "CCW"
-                        if (!RightPawExtended && !LeftPawExtended)
+                        if (!RightPawExtended && !LeftPawExtended && !headCollisionCheck.ShouldIMove(transform.forward, moveSnap))
                         {
                             numberOfRotations -= 1;
                             transform.rotation = Quaternion.Euler(0.0f, numberOfRotations * rotateSnap, 0.0f);

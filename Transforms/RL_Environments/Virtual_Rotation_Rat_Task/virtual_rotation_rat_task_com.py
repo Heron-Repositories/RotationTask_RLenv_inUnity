@@ -26,7 +26,7 @@ ParameterNames = ['Visualisation', 'Game', 'Screen Resolution X', 'Screen Resolu
                   'Observation Type']
 ParameterTypes = ['bool', 'str', 'int', 'int', 'float', 'int', 'list']
 
-ParametersDefaultValues = [False, 'TTM_FindReward', 100, 100, 0.1, 10, ['Pixels', 'Parameters', 'Everything']]
+ParametersDefaultValues = [False, 'TTM_FindReward', 100, 100, 0.1, 10, ['Pixels', 'Features', 'Everything']]
 
 # The following line needs to exist with the correct name for the xxx_worker.py script
 WorkerDefaultExecutable = os.path.join(os.path.dirname(Exec), 'virtual_rotation_rat_task_worker.py')
