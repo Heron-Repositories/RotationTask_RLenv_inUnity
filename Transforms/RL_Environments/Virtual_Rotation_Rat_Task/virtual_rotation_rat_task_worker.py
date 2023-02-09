@@ -185,6 +185,7 @@ def work_function(data, parameters, savenodestate_update_substate_df):
 
         command_features_reward = features
         command_features_reward['state index'] = state_index
+        command_features_reward['reward'] = reward
 
     if pixels is not None:
         pixels_features_reward_dict['Pixels'] = np.ascontiguousarray(pixels).tolist()
