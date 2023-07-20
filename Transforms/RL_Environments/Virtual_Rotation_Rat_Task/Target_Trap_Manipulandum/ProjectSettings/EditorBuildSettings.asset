@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/TTM_ExploreCorners.unity
     guid: dcd5e200c4370c747bfae131c9a41359
   - enabled: 0
@@ -17,7 +17,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/TTM_ButtonsNoPoke.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TTM_ButtonsWithPoke.unity
     guid: 7aa3070d60a25034dbd1c9f0626c5267
   m_configObjects: {}

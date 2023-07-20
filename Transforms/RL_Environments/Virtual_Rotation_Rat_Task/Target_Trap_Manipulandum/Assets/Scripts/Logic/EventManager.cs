@@ -34,7 +34,7 @@ public class EventManager : MonoBehaviour
 
     public StringEvent onUpdatedAction;
     public StringEvent onParametersChange;
-    public IntEvent onRewardStructureChange;
+    public FloatEvent onRewardStructureChange;
     public ByteArrayEvent onPixelsObservationReady;
     public FloatEvent onNewMoveSnapReceived;
     public FloatEvent onNewRotateSnapReceived;

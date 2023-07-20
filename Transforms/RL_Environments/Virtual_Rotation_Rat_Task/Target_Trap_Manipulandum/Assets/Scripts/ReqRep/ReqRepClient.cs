@@ -27,7 +27,7 @@ public class ReqRepClient : MonoBehaviour
 
     private byte[] observationPixelsArray;
     private bool newObservationArrayReady = false;
-    private int reward = 0;
+    private float reward = 0f;
     private bool touchRewardPriority = false;
     private List<byte[]> observationFeaturesList;
 
@@ -147,7 +147,7 @@ public class ReqRepClient : MonoBehaviour
         newObservationArrayReady = true;
     }
 
-    private void SaveNewReward(int new_reward)
+    private void SaveNewReward(float new_reward)
     {
         if(!touchRewardPriority)
             reward = new_reward;

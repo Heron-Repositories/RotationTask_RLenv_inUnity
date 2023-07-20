@@ -81,6 +81,9 @@ public class CollisionCheck : MonoBehaviour
             case string value when value.Contains("AreaHigh"):
                 CustomEvent.Trigger(transform.gameObject, "AreaHighEntered");
                 break;
+            case string value when value.Contains("AreaMedium"):
+                CustomEvent.Trigger(transform.gameObject, "AreaMediumEntered");
+                break;
         }
     }
 
@@ -100,9 +103,9 @@ public class CollisionCheck : MonoBehaviour
             case "Hole":
                 CustomEvent.Trigger(transform.gameObject, "HoleUnPoked");
                 break;
-            case string value when value.Contains("AreaHigh"):
-                CustomEvent.Trigger(transform.gameObject, "AreaHighLeft");
-                break;
+            //case string value when value.Contains("AreaHigh"):
+            //    CustomEvent.Trigger(transform.gameObject, "AreaHighLeft");
+            //    break;
         }
     }
 }

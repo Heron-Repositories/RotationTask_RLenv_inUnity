@@ -60,6 +60,9 @@ public class RatController : MonoBehaviour
     private GameObject Manipulandum;
     private GameObject Target;
 
+    private float SizeOfBody;
+    private float SizeOfHead;
+
 
     void Start()
     {
@@ -77,6 +80,9 @@ public class RatController : MonoBehaviour
         Target = GameObject.Find("Target");
 
         EventManager.Instance.onFeaturesObservationReady.Invoke(GenerateFeaturesObservation());
+
+        SizeOfBody = transform.Find("Body").localScale.z;
+        SizeOfHead = transform.Find("Head").localScale.z;
     }
 
     /// <summary>
@@ -146,21 +152,21 @@ public class RatController : MonoBehaviour
                 switch (latest_action.Value)
                 {
                     case var value when value == all_values_in_action[0]: // "Forwards"
-                        if (!RightPawExtended && !LeftPawExtended && !headCollisionCheck.ShouldIMove(transform.forward, moveSnap))
+                        if (!RightPawExtended && !LeftPawExtended && !headCollisionCheck.ShouldIMove(transform.forward, 1.1f * SizeOfHead / 2))
                         {
                             transform.Translate(new Vector3(0, 0, moveSnap));
                             RepositionInGrid();
-                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.Moved);
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.MovedForwards);
                         }
                         else
                             EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.NotMoved);
                         break;
                     case var value when value == all_values_in_action[1]: // "Back"
-                        if (!RightPawExtended && !LeftPawExtended && !bodyCollisionCheck.ShouldIMove(-transform.forward, moveSnap))
+                        if (!RightPawExtended && !LeftPawExtended && !bodyCollisionCheck.ShouldIMove(-transform.forward, 1.1f * SizeOfBody / 2))
                         {
                             transform.Translate(new Vector3(0, 0, -moveSnap));
                             RepositionInGrid();
-                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.Moved);
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.MovedBack);
                         }
                         else
                             EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.NotMoved);
@@ -174,21 +180,21 @@ public class RatController : MonoBehaviour
                 switch (latest_action.Value)
                 {
                     case var value when value == all_values_in_action[0]: // "CW"
-                        if (!RightPawExtended && !LeftPawExtended && !headCollisionCheck.ShouldIMove(transform.forward, moveSnap))
+                        if (!RightPawExtended && !LeftPawExtended && !headCollisionCheck.ShouldIMove(transform.right, 1.1f * SizeOfBody / 2))
                         {
                             numberOfRotations += 1;
                             transform.rotation = Quaternion.Euler(0.0f, numberOfRotations * rotateSnap, 0.0f);
-                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.Moved);
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.TurnedCW);
                         }
                         else
                             EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.NotMoved);
                         break;
                     case var value when value == all_values_in_action[1]: // "CCW"
-                        if (!RightPawExtended && !LeftPawExtended && !headCollisionCheck.ShouldIMove(transform.forward, moveSnap))
+                        if (!RightPawExtended && !LeftPawExtended && !headCollisionCheck.ShouldIMove(-transform.right, 1.1f * SizeOfBody / 2))
                         {
                             numberOfRotations -= 1;
                             transform.rotation = Quaternion.Euler(0.0f, numberOfRotations * rotateSnap, 0.0f);
-                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.Moved);
+                            EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.TurnedCCW);
                         }
                         else
                             EventManager.Instance.onRewardStructureChange.Invoke(RewardStructure.Instance.NotMoved);
